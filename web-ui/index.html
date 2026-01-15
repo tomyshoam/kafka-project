@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>PMK Purchases Demo</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      input,
+      button {
+        padding: 0.5rem;
+        margin: 0.25rem 0;
+        width: 100%;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+      pre {
+        background: #111;
+        color: #eee;
+        padding: 1rem;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>PMK Purchases Demo</h1>
+
+    <h2>Buy</h2>
+    <div class="row">
+      <div>
+        <label>User ID</label>
+        <input id="userId" value="u1" />
+      </div>
+      <div>
+        <label>Item ID</label>
+        <input id="itemId" value="i99" />
+      </div>
+    </div>
+    <label>Quantity</label>
+    <input id="quantity" type="number" min="1" value="1" />
+    <button id="buyBtn">Buy</button>
+
+    <h2>Get All Bought Items</h2>
+    <button id="fetchBtn">Fetch</button>
+
+    <h2>Output</h2>
+    <pre id="out">{}</pre>
+
+    <script>
+      // If you serve this page from web-server later, same-origin works.
+      // If you open the HTML directly from file://, you'll likely hit CORS.
+      const BASE = ""; // same origin
+
+      const out = document.getElementById("out");
+      const userIdEl = document.getElementById("userId");
+      const itemIdEl = document.getElementById("itemId");
+      const quantityEl = document.getElementById("quantity");
+
+      function show(obj) {
+        out.textContent = JSON.stringify(obj, null, 2);
+      }
+
+      async function buy() {
+        const body = {
+          userId: userIdEl.value.trim(),
+          itemId: itemIdEl.value.trim(),
+          quantity: Number(quantityEl.value),
+        };
+
+        const r = await fetch(`${BASE}/buy`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+
+        const data = await r.json();
+        show({ action: "buy", status: r.status, data });
+      }
+
+      async function fetchAll() {
+        const userId = userIdEl.value.trim();
+        const r = await fetch(
+          `${BASE}/getAllBoughtItems?userId=${encodeURIComponent(userId)}`
+        );
+        const data = await r.json();
+        show({ action: "getAllBoughtItems", status: r.status, data });
+      }
+
+      document.getElementById("buyBtn").onclick = buy;
+      document.getElementById("fetchBtn").onclick = fetchAll;
+    </script>
+  </body>
+</html>

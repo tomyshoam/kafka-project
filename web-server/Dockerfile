@@ -2,11 +2,14 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy dependency list from the web-server folder
+COPY web-server/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app ./app
-# if you added web-ui:
+# Copy backend code
+COPY web-server/app ./app
+
+# Copy UI (sibling folder at repo root)
 COPY web-ui ./web-ui
 
 EXPOSE 9000

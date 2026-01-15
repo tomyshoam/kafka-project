@@ -1,8 +1,12 @@
 services:
   api-server:
-    build: ./api-server
+    build:
+      context: .
+      dockerfile: api-server/Dockerfile
     container_name: api-server
     restart: unless-stopped
+    ports:
+      - "8000:8000"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "172.31.0.202:9092"
       KAFKA_TOPIC: "purchases.v1"
@@ -10,8 +14,6 @@ services:
       MONGO_URI: "mongodb://172.31.2.197:27017"
       MONGO_DB: "purchases_db"
       MONGO_COLLECTION: "purchases"
-    ports:
-      - "8000:8000"
 
   web-server:
     build:
@@ -19,9 +21,9 @@ services:
       dockerfile: web-server/Dockerfile
     container_name: web-server
     restart: unless-stopped
+    ports:
+      - "9000:9000"
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "172.31.0.202:9092"
       KAFKA_TOPIC: "purchases.v1"
       API_SERVER_URL: "http://api-server:8000"
-    ports:
-      - "9000:9000"

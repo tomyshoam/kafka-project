@@ -14,12 +14,14 @@ services:
       - "8000:8000"
 
   web-server:
-    build: ./web-server
+    build:
+      context: .
+      dockerfile: web-server/Dockerfile
     container_name: web-server
     restart: unless-stopped
     environment:
       KAFKA_BOOTSTRAP_SERVERS: "172.31.0.202:9092"
       KAFKA_TOPIC: "purchases.v1"
-      API_SERVER_URL: "http://172.31.2.3:8000"
+      API_SERVER_URL: "http://api-server:8000"
     ports:
       - "9000:9000"

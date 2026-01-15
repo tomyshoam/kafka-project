@@ -21,9 +21,11 @@ from .config import KAFKA_TOPIC
 from .kafka_producer import create_producer, send_purchase_created
 from .models import BuyRequest, PurchaseCreatedEvent
 
+from pathlib import Path
 from fastapi.staticfiles import StaticFiles
 # serve ./web-ui as static site
-app.mount("/ui", StaticFiles(directory="../web-ui", html=True), name="web-ui")
+UI_DIR = Path("/app/web-ui")
+app.mount("/ui", StaticFiles(directory=str(UI_DIR), html=True), name="web-ui")
 
 app = FastAPI(title="Client Web Server")
 
